@@ -13,6 +13,8 @@
   body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
          background:var(--bg); color:var(--fg); font-family:Georgia, 'Times New Roman', serif; padding:1.5rem; }
   main { width:100%; max-width:640px; }
+  .nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+  .nav .count { font:600 .85rem system-ui, sans-serif; color:var(--muted); }
   .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.5rem 1.75rem; margin-bottom:1rem; }
   .label { font:600 .72rem/1 system-ui, sans-serif; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:.6rem; }
   .sentence { font-size:clamp(1.6rem, 5vw, 2.2rem); line-height:1.4; }
@@ -22,6 +24,7 @@
   button { font:600 1rem system-ui, sans-serif; padding:.7rem 1.2rem; border-radius:10px; border:1px solid var(--accent);
            background:var(--accent); color:#fff; cursor:pointer; }
   button.secondary { background:transparent; color:var(--accent); }
+  button.small { padding:.45rem .9rem; font-size:.9rem; }
   button:disabled { opacity:.4; cursor:default; }
   .hidden { display:none; }
   .error { color:#b91c1c; font-family:system-ui, sans-serif; }
@@ -29,6 +32,12 @@
 </head>
 <body>
 <main>
+  <div class="nav">
+    <button class="secondary small" id="prevBtn" disabled>← Previous sentence</button>
+    <span class="count" id="count"></span>
+    <button class="secondary small" id="nextBtn" disabled>Next sentence →</button>
+  </div>
+
   <div class="card">
     <div class="label">Your sentence</div>
     <div class="sentence" id="sentence">Loading…</div>
@@ -49,31 +58,53 @@
 </main>
 
 <script>
-  let data = null;
+  let sentences = [];
+  let sIndex = 0;
   let current = -1;
   let revealed = false;
 
   const $ = id => document.getElementById(id);
 
   function renderSentence(stressIndex = null) {
-    const words = data.sentence.split(/\s+/);
-    $('sentence').innerHTML = '';
+    const words = sentences[sIndex].text.split(/\s+/);
+    const el = $('sentence');
+    el.innerHTML = '';
     words.forEach((w, i) => {
       const span = document.createElement('span');
       span.className = 'word' + (i === stressIndex ? ' stressed' : '');
       span.textContent = w;
-      $('sentence').appendChild(span);
-      if (i < words.length - 1) $('sentence').appendChild(document.createTextNode(' '));
+      el.appendChild(span);
+      if (i < words.length - 1) el.appendChild(document.createTextNode(' '));
     });
   }
 
+  function showSentence(i) {
+    sIndex = i;
+    current = -1;
+    revealed = false;
+    renderSentence();
+    $('count').textContent = `Sentence ${sIndex + 1} of ${sentences.length}`;
+    $('prevBtn').disabled = sentences.length < 2;
+    $('nextBtn').disabled = sentences.length < 2;
+    $('statementCard').classList.add('hidden');
+    $('hint').classList.add('hidden');
+    $('revealBtn').classList.add('hidden');
+    $('drawBtn').textContent = 'Draw a statement';
+    $('drawBtn').disabled = false;
+  }
+
+  function move(step) {
+    showSentence((sIndex + step + sentences.length) % sentences.length);
+  }
+
   function draw() {
+    const list = sentences[sIndex].statements;
     let next;
-    do { next = Math.floor(Math.random() * data.statements.length); }
-    while (data.statements.length > 1 && next === current);
+    do { next = Math.floor(Math.random() * list.length); }
+    while (list.length > 1 && next === current);
     current = next;
     revealed = false;
-    $('statement').textContent = '\u201C' + data.statements[current].text + '\u201D';
+    $('statement').textContent = '\u201C' + list[current].text + '\u201D';
     $('statementCard').classList.remove('hidden');
     $('hint').classList.remove('hidden');
     $('revealBtn').classList.remove('hidden');
@@ -84,16 +115,16 @@
 
   function reveal() {
     revealed = !revealed;
-    renderSentence(revealed ? data.statements[current].stress : null);
+    renderSentence(revealed ? sentences[sIndex].statements[current].stress : null);
     $('revealBtn').textContent = revealed ? 'Hide the answer' : 'Reveal the stressed word';
   }
 
   fetch('data.json')
     .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(json => {
-      data = json;
-      renderSentence();
-      $('drawBtn').disabled = false;
+      sentences = (json.sentences || []).filter(s => s.text && s.statements && s.statements.length);
+      if (!sentences.length) throw new Error('empty');
+      showSentence(0);
     })
     .catch(() => {
       $('sentence').textContent = 'Could not load data.json';
@@ -102,6 +133,8 @@
 
   $('drawBtn').addEventListener('click', draw);
   $('revealBtn').addEventListener('click', reveal);
+  $('prevBtn').addEventListener('click', () => move(-1));
+  $('nextBtn').addEventListener('click', () => move(1));
 </script>
 </body>
 </html>

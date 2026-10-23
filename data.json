@@ -1,12 +1,39 @@
 {
-  "sentence": "I never said she stole my money.",
-  "statements": [
-    { "text": "Somebody told me you accused her of stealing.", "stress": 0 },
-    { "text": "So you admit you said it, then?", "stress": 1 },
-    { "text": "You hinted it in that note, didn't you?", "stress": 2 },
-    { "text": "You told everyone he stole your money.", "stress": 3 },
-    { "text": "So she just borrowed it without asking?", "stress": 4 },
-    { "text": "You said she stole Dave's money.", "stress": 5 },
-    { "text": "She took your jewellery, didn't she?", "stress": 6 }
+  "sentences": [
+    {
+      "text": "I never said she stole my money.",
+      "statements": [
+        { "text": "Somebody told me you accused her of stealing.", "stress": 0 },
+        { "text": "So you admit you said it, then?", "stress": 1 },
+        { "text": "You hinted it in that note, didn't you?", "stress": 2 },
+        { "text": "You told everyone he stole your money.", "stress": 3 },
+        { "text": "So she just borrowed it without asking?", "stress": 4 },
+        { "text": "You said she stole Dave's money.", "stress": 5 },
+        { "text": "She took your jewellery, didn't she?", "stress": 6 }
+      ]
+    },
+    {
+      "text": "I didn't take the car to London.",
+      "statements": [
+        { "text": "Somebody took the car to London. Was it you?", "stress": 0 },
+        { "text": "You took the car to London, didn't you?", "stress": 1 },
+        { "text": "So you stole it and drove it there?", "stress": 2 },
+        { "text": "You took the van to London, I heard.", "stress": 4 },
+        { "text": "You took the car from London, didn't you?", "stress": 5 },
+        { "text": "You took the car to Paris, didn't you?", "stress": 6 }
+      ]
+    },
+    {
+      "text": "I think you should call her tonight.",
+      "statements": [
+        { "text": "Does anyone else think I should call her?", "stress": 0 },
+        { "text": "Do you actually know I should call her?", "stress": 1 },
+        { "text": "Who do you think should call her tonight?", "stress": 2 },
+        { "text": "So calling her tonight is optional?", "stress": 3 },
+        { "text": "Should I text her tonight?", "stress": 4 },
+        { "text": "Should I call his sister tonight?", "stress": 5 },
+        { "text": "Should I call her tomorrow?", "stress": 6 }
+      ]
+    }
   ]
 }
