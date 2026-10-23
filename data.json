@@ -1,0 +1,12 @@
+{
+  "sentence": "I never said she stole my money.",
+  "statements": [
+    { "text": "Somebody told me you accused her of stealing.", "stress": 0 },
+    { "text": "So you admit you said it, then?", "stress": 1 },
+    { "text": "You hinted it in that note, didn't you?", "stress": 2 },
+    { "text": "You told everyone he stole your money.", "stress": 3 },
+    { "text": "So she just borrowed it without asking?", "stress": 4 },
+    { "text": "You said she stole Dave's money.", "stress": 5 },
+    { "text": "She took your jewellery, didn't she?", "stress": 6 }
+  ]
+}

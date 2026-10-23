@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stress the Word</title>
+<style>
+  :root { --bg:#faf8f5; --fg:#222; --muted:#6b6b6b; --card:#fff; --accent:#c2410c; --line:#e3ded6; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#17171a; --fg:#f0ede8; --muted:#9a9a9a; --card:#222226; --accent:#fb923c; --line:#33333a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+         background:var(--bg); color:var(--fg); font-family:Georgia, 'Times New Roman', serif; padding:1.5rem; }
+  main { width:100%; max-width:640px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.5rem 1.75rem; margin-bottom:1rem; }
+  .label { font:600 .72rem/1 system-ui, sans-serif; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:.6rem; }
+  .sentence { font-size:clamp(1.6rem, 5vw, 2.2rem); line-height:1.4; }
+  .statement { font-size:1.35rem; font-style:italic; }
+  .word.stressed { color:var(--accent); font-weight:700; text-decoration:underline; text-underline-offset:6px; text-transform:uppercase; }
+  .buttons { display:flex; gap:.75rem; flex-wrap:wrap; }
+  button { font:600 1rem system-ui, sans-serif; padding:.7rem 1.2rem; border-radius:10px; border:1px solid var(--accent);
+           background:var(--accent); color:#fff; cursor:pointer; }
+  button.secondary { background:transparent; color:var(--accent); }
+  button:disabled { opacity:.4; cursor:default; }
+  .hidden { display:none; }
+  .error { color:#b91c1c; font-family:system-ui, sans-serif; }
+</style>
+</head>
+<body>
+<main>
+  <div class="card">
+    <div class="label">Your sentence</div>
+    <div class="sentence" id="sentence">Loading…</div>
+  </div>
+
+  <div class="card hidden" id="statementCard">
+    <div class="label">Someone says to you…</div>
+    <div class="statement" id="statement"></div>
+  </div>
+
+  <p id="hint" class="label hidden">Say the sentence aloud as a reply, stressing the right word.</p>
+
+  <div class="buttons">
+    <button id="drawBtn" disabled>Draw a statement</button>
+    <button id="revealBtn" class="secondary hidden">Reveal the stressed word</button>
+  </div>
+  <p class="error" id="error"></p>
+</main>
+
+<script>
+  let data = null;
+  let current = -1;
+  let revealed = false;
+
+  const $ = id => document.getElementById(id);
+
+  function renderSentence(stressIndex = null) {
+    const words = data.sentence.split(/\s+/);
+    $('sentence').innerHTML = '';
+    words.forEach((w, i) => {
+      const span = document.createElement('span');
+      span.className = 'word' + (i === stressIndex ? ' stressed' : '');
+      span.textContent = w;
+      $('sentence').appendChild(span);
+      if (i < words.length - 1) $('sentence').appendChild(document.createTextNode(' '));
+    });
+  }
+
+  function draw() {
+    let next;
+    do { next = Math.floor(Math.random() * data.statements.length); }
+    while (data.statements.length > 1 && next === current);
+    current = next;
+    revealed = false;
+    $('statement').textContent = '\u201C' + data.statements[current].text + '\u201D';
+    $('statementCard').classList.remove('hidden');
+    $('hint').classList.remove('hidden');
+    $('revealBtn').classList.remove('hidden');
+    $('revealBtn').textContent = 'Reveal the stressed word';
+    $('drawBtn').textContent = 'Draw another';
+    renderSentence();
+  }
+
+  function reveal() {
+    revealed = !revealed;
+    renderSentence(revealed ? data.statements[current].stress : null);
+    $('revealBtn').textContent = revealed ? 'Hide the answer' : 'Reveal the stressed word';
+  }
+
+  fetch('data.json')
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(json => {
+      data = json;
+      renderSentence();
+      $('drawBtn').disabled = false;
+    })
+    .catch(() => {
+      $('sentence').textContent = 'Could not load data.json';
+      $('error').textContent = 'If you opened this file directly, serve the folder over HTTP instead (e.g. run "python3 -m http.server" in it).';
+    });
+
+  $('drawBtn').addEventListener('click', draw);
+  $('revealBtn').addEventListener('click', reveal);
+</script>
+</body>
+</html>
