@@ -1,6 +1,19 @@
 {
   "sentences": [
     {
+      "text": "I asked you to buy me a bunch of red roses.",
+      "statements": [
+        { "text": "Did your brother ask me to buy the roses?.", "stress": 0 },
+        { "text": "Did you order me to buy roses?", "stress": 1 },
+        { "text": "Did you ask my sister?", "stress": 2 },
+        { "text": "I picked some roses in the park, is that OK?", "stress": 4 },
+        { "text": "Shall I buy the roses for your mother?", "stress": 5 },
+        { "text": "Here’s a single red rose, Ok?", "stress": 7 },
+        { "text": "I have got you a bunch of white roses.", "stress": 9},
+        { "text": "I have got you a bunch of red tulips.", "stress": 10}
+      ]
+    },
+    {
       "text": "I never said she stole my money.",
       "statements": [
         { "text": "Somebody told me you accused her of stealing.", "stress": 0 },
